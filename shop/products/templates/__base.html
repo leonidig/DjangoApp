@@ -38,6 +38,7 @@
                 {% csrf_token %}
                 <button type="submit" style="background:none; border:none; color:white; cursor:pointer;">Logout</button>
             </form>
+            <a href="{% url 'products:create_product' %}">Create Product</a>
         {% else %}
             <a href="{% url 'products:login' %}">Login</a>
         {% endif %}
