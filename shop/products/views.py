@@ -3,11 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 from .forms import ProductForm
+from .models import Product
 
 
 
 def index(request):
-    return render(request, 'index.html')
+    products = Product.objects.all()
+    return render(request, 'index.html', {'products': products})
 
 
 def register(request):
@@ -35,3 +37,8 @@ def create_product(request):
         form = ProductForm()
 
     return render(request, "create_product.html", {"form": form})
+
+
+def product_detail(request, id: int):
+    product = Product.objects.get(pk=id)
+    return render(request, 'product_detail.html', {'product': product})
