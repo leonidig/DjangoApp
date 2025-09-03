@@ -3,13 +3,35 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 from .forms import ProductForm
-from .models import Product
+from .models import Product, Category
 
 
 
 def index(request):
     products = Product.objects.all()
-    return render(request, 'index.html', {'products': products})
+
+    title = request.GET.get("title")
+    category_id = request.GET.get("category")
+    sort_price = request.GET.get("sort_price")
+
+    if title:
+        products = products.filter(name__icontains=title)
+
+    if category_id:
+        products = products.filter(category_id=category_id)
+
+    if sort_price == "desc":
+        products = products.order_by("-price")
+    elif sort_price == "asc":
+        products = products.order_by("price")
+
+    categories = Category.objects.all()
+
+    return render(request, "index.html", {
+        "products": products,
+        "categories": categories
+    })
+
 
 
 def register(request):
