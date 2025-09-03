@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponseForbidden
 
 from .forms import ProductForm
 from .models import Product, Category
@@ -62,5 +63,16 @@ def create_product(request):
 
 
 def product_detail(request, id: int):
-    product = Product.objects.get(pk=id)
+    product = get_object_or_404(Product, pk=id)
     return render(request, 'product_detail.html', {'product': product})
+
+
+
+def delete_product(request, id: int):
+    product = get_object_or_404(Product, pk=id)
+
+    if request.user != product.owner:
+        return HttpResponseForbidden("You are not allowed to delete this product.")
+
+    product.delete()
+    return redirect('products:index')
