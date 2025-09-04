@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseForbidden
+from django.contrib import messages
 
 from .forms import ProductForm
 from .models import Product, Category
@@ -74,5 +75,6 @@ def delete_product(request, id: int):
     if request.user != product.owner:
         return HttpResponseForbidden("You are not allowed to delete this product.")
 
+    messages.success(request, f'Product `{product.name}` was deleted successfully!')
     product.delete()
     return redirect('products:index')

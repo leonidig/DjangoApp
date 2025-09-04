@@ -5,6 +5,15 @@
 {% block content %}
 <h1>Welcome to our Shop 🛒</h1>
 
+{% if messages %}
+  <ul style="list-style: none; padding: 0;">
+    {% for message in messages %}
+      <li style="margin-bottom: 10px; padding: 10px; border-radius: 5px; background: #e0ffe0; color: #333;">
+        {{ message }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
 
 <form method="get" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
   <input type="text" name="title" placeholder="Search by title..."
