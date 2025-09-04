@@ -78,3 +78,20 @@ def delete_product(request, id: int):
     messages.success(request, f'Product `{product.name}` was deleted successfully!')
     product.delete()
     return redirect('products:index')
+
+
+def update_product(request, id: int):
+    product = get_object_or_404(Product, pk=id)
+
+    if request.user != product.owner:
+        return HttpResponseForbidden("You are not allowed to edit this product.")
+
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Product `{product.name}` was updated successfully!')
+            return redirect('products:index')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'update_product.html', {'form': form, 'product': product})

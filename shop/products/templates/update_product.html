@@ -1,0 +1,15 @@
+{% extends "__base.html" %}
+
+{% block title %}Update {{ product.name }}{% endblock %}
+
+{% block content %}
+<h2>Update product: {{ product.name }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" style="padding: 8px 15px; border: none; border-radius: 5px; background: #333; color: #fff;">
+    Save
+  </button>
+</form>
+{% endblock %}
