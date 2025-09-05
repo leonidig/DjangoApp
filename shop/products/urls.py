@@ -1,5 +1,15 @@
 from django.urls import path
-from .views import index, register, create_product, product_detail, delete_product, update_product
+from .views import (index,
+                    register,
+                    create_product,
+                    product_detail,
+                    delete_product,
+                    update_product, 
+                    cart_add,
+                    cart_remove,
+                    cart_detail,
+                    cart_update    
+                )
 from django.contrib.auth import views as auth_views
 
 app_name = 'products'
@@ -12,5 +22,10 @@ urlpatterns = [
     path('create/', create_product, name='create_product'),
     path('detail/<int:id>/', product_detail, name='product_detail'),
     path('delete/<int:id>/', delete_product, name='delete_product'),
-    path('update/<int:id>/', update_product, name='update_product')
+    path('update/<int:id>/', update_product, name='update_product'),
+    path("add/<int:product_id>/", cart_add, name="cart_add"),
+    path("remove/<int:item_id>/", cart_remove, name="cart_remove"),
+    path('cart_detail/', cart_detail, name='cart_detail'),
+    path("cart/update/<int:item_id>/", cart_update, name="cart_update"),
+
 ]

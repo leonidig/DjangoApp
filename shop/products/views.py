@@ -4,8 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 
-from .forms import ProductForm
-from .models import Product, Category
+from .forms import ProductForm, CartAddForm
+from .models import Product, Category, Cart, CartItem
 
 
 
@@ -95,3 +95,55 @@ def update_product(request, id: int):
     else:
         form = ProductForm(instance=product)
     return render(request, 'update_product.html', {'form': form, 'product': product})
+
+
+@login_required
+def cart_detail(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    return render(request, "cart/detail.html", {"cart": cart})
+
+
+@login_required
+def cart_add(request, product_id):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    product = get_object_or_404(Product, id=product_id)
+    form = CartAddForm(request.POST)
+    if form.is_valid():
+        quantity = form.cleaned_data['quantity']
+        item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        if not created:
+            item.quantity += quantity
+        else:
+            item.quantity = quantity
+        item.save()
+    return redirect("products:cart_detail")
+
+@login_required
+def cart_remove(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    item.delete()
+    return redirect("products:cart_detail")
+
+
+@login_required
+def cart_update(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "increase":
+            item.quantity += 1
+            item.save()
+        elif action == "decrease":
+            if item.quantity > 1:
+                item.quantity -= 1
+                item.save()
+            else:
+                item.delete()
+        else:
+            quantity = int(request.POST.get("quantity", 1))
+            if quantity > 0:
+                item.quantity = quantity
+                item.save()
+            else:
+                item.delete()
+    return redirect("products:cart_detail")
