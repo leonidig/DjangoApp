@@ -1,0 +1,33 @@
+{% extends "__base.html" %}
+
+{% block title %}Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<h2>Order #{{ order.id }} by {{ order.user.username }}</h2>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.product.name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>${{ item.price }}</td>
+      <td>${{ item.total_price }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" name="action" value="accept" class="btn btn-success">✅ Accept</button>
+  <button type="submit" name="action" value="reject" class="btn btn-danger">❌ Reject</button>
+</form>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "__base.html" %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4 text-center">📦 My Orders</h1>
+
+  {% if orders %}
+    <ul class="list-group">
+      {% for order in orders %}
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-column flex-md-row mb-2 shadow-sm rounded">
+          <div>
+            <strong>Order #{{ order.id }}</strong> — Placed on {{ order.created_at|date:"d M Y H:i" }} — Total: ${{ order.total_price }}
+          </div>
+
+          <div class="mt-2 mt-md-0">
+            {% if order.status == "pending" %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% elif order.status == "processing" %}
+              <span class="badge bg-info text-dark">Processing</span>
+            {% elif order.status == "completed" %}
+              <span class="badge bg-success">Completed</span>
+            {% elif order.status == "canceled" %}
+              <span class="badge bg-danger">Canceled</span>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-info text-center mt-4">
+      You haven't placed any orders yet. 🛍️
+      <a href="{% url 'products:index' %}" class="alert-link">Shop now</a>
+    </div>
+  {% endif %}
+
+  <div class="mt-4 text-center">
+    <a href="{% url 'products:index' %}" class="btn btn-outline-dark">⬅ Back to Shop</a>
+  </div>
+</div>
+{% endblock %}

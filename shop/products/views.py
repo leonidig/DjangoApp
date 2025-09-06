@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -5,7 +7,7 @@ from django.http import HttpResponseForbidden
 from django.contrib import messages
 
 from .forms import ProductForm, CartAddForm
-from .models import Product, Category, Cart, CartItem
+from .models import Product, Category, Cart, CartItem, Order, OrderItem
 
 
 
@@ -28,10 +30,12 @@ def index(request):
         products = products.order_by("price")
 
     categories = Category.objects.all()
+    new_orders = OrderItem.objects.filter(product__owner=request.user, order__status="pending").exists()
 
     return render(request, "index.html", {
         "products": products,
-        "categories": categories
+        "categories": categories,
+        "new_orders": new_orders
     })
 
 
@@ -147,3 +151,69 @@ def cart_update(request, item_id):
             else:
                 item.delete()
     return redirect("products:cart_detail")
+
+
+@login_required
+def checkout(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    if not cart.items.exists():
+        return redirect("products:cart_detail")
+
+    items_by_owner = defaultdict(list)
+    for item in cart.items.all():
+        items_by_owner[item.product.owner].append(item)
+
+    created_orders = []
+
+    for owner, items in items_by_owner.items():
+        order = Order.objects.create(user=request.user)
+        for cart_item in items:
+            OrderItem.objects.create(
+                order=order,
+                product=cart_item.product,
+                quantity=cart_item.quantity,
+                price=cart_item.product.price,
+            )
+        created_orders.append(order)
+
+    cart.items.all().delete()
+
+    return redirect("products:order_detail", order_id=created_orders[0].id)
+
+
+@login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, "orders/detail.html", {"order": order})
+
+
+@login_required
+def seller_orders(request):
+    orders = Order.objects.filter(items__product__owner=request.user).distinct()
+
+    return render(request, "orders/seller_orders.html", {"orders": orders})
+
+
+@login_required
+def seller_confirm_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, items__product__owner=request.user)
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "accept":
+            order.status = "processing"
+            order.save()
+        elif action == "reject":
+            order.status = "canceled"
+            order.save()
+        return redirect("products:seller_orders")
+
+    seller_items = order.items.filter(product__owner=request.user)
+    return render(request, "orders/seller_order_detail.html", {"order": order, "items": seller_items})
+
+
+
+@login_required
+def my_orders(request):
+    orders = request.user.orders.all().order_by("-created_at")
+    return render(request, "orders/my_orders.html", {"orders": orders})

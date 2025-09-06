@@ -5,6 +5,14 @@
 {% block content %}
 <h1>Welcome to our Shop 🛒</h1>
 
+{% if new_orders %}
+  <div style="padding: 15px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+    ⚠️ You have new orders! 
+    <a href="{% url 'products:seller_orders' %}" style="font-weight: bold; text-decoration: underline;">View orders</a>
+  </div>
+{% endif %}
+
+
 {% if messages %}
   <ul style="list-style: none; padding: 0;">
     {% for message in messages %}

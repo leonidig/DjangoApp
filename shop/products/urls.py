@@ -8,7 +8,12 @@ from .views import (index,
                     cart_add,
                     cart_remove,
                     cart_detail,
-                    cart_update    
+                    cart_update,
+                    order_detail,
+                    checkout,
+                    seller_confirm_order,
+                    seller_orders,
+                    my_orders
                 )
 from django.contrib.auth import views as auth_views
 
@@ -27,5 +32,10 @@ urlpatterns = [
     path("remove/<int:item_id>/", cart_remove, name="cart_remove"),
     path('cart_detail/', cart_detail, name='cart_detail'),
     path("cart/update/<int:item_id>/", cart_update, name="cart_update"),
+    path("checkout/", checkout, name="checkout"),
+    path("order/<int:order_id>/", order_detail, name="order_detail"),
+    path("seller/orders/", seller_orders, name="seller_orders"),
+    path("seller/order/<int:order_id>/", seller_confirm_order, name="seller_confirm_order"),
+    path("my_orders/", my_orders, name="my_orders")
 
 ]
