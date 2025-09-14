@@ -10,7 +10,7 @@ from .forms import ProductForm, CartAddForm
 from .models import Product, Category, Cart, CartItem, Order, OrderItem
 
 
-
+@login_required
 def index(request):
     products = Product.objects.all()
 

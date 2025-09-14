@@ -3,63 +3,162 @@
 {% block title %}Home - Shop{% endblock %}
 
 {% block content %}
+<style>
+/* Общий контейнер */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Уведомления о новых заказах */
+.new-orders {
+    padding: 15px;
+    background-color: #2a2a3d;
+    border: 1px solid #444466;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #f0e68c;
+    font-weight: 600;
+}
+.new-orders a {
+    font-weight: bold;
+    text-decoration: underline;
+    color: #6c63ff;
+}
+.new-orders a:hover {
+    color: #fff;
+}
+
+/* Сообщения */
+.messages-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+.messages-list li {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #33334d;
+    color: #fff;
+}
+
+/* Форма фильтров */
+.filter-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+.filter-form input,
+.filter-form select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #444466;
+    background-color: #1f1f2f;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+.filter-form input::placeholder {
+    color: #aaa;
+}
+.filter-form button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    background-color: #6c63ff;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.filter-form button:hover {
+    background-color: #5750d1;
+    transform: translateY(-2px);
+}
+
+/* Сетка продуктов */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Карточка товара */
+.product-card {
+    border: 1px solid #444466;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    background-color: #1f1f2f;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+}
+.product-card h3 a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+.product-card h3 a:hover {
+    color: #6c63ff;
+}
+.product-card p {
+    font-weight: 600;
+    color: #f0f0f0;
+    margin-top: 5px;
+}
+</style>
+
 <h1>Welcome to our Shop 🛒</h1>
 
 {% if new_orders %}
-  <div style="padding: 15px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+<div class="new-orders">
     ⚠️ You have new orders! 
-    <a href="{% url 'products:seller_orders' %}" style="font-weight: bold; text-decoration: underline;">View orders</a>
-  </div>
+    <a href="{% url 'products:seller_orders' %}">View orders</a>
+</div>
 {% endif %}
-
 
 {% if messages %}
-  <ul style="list-style: none; padding: 0;">
+<ul class="messages-list">
     {% for message in messages %}
-      <li style="margin-bottom: 10px; padding: 10px; border-radius: 5px; background: #e0ffe0; color: #333;">
-        {{ message }}
-      </li>
+    <li>{{ message }}</li>
     {% endfor %}
-  </ul>
+</ul>
 {% endif %}
 
-<form method="get" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-  <input type="text" name="title" placeholder="Search by title..."
-         value="{{ request.GET.title }}" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-
-  <select name="category" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-    <option value="">All categories</option>
-    {% for cat in categories %}
-      <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
-        {{ cat.name }}
-      </option>
-    {% endfor %}
-  </select>
-
-  <select name="sort_price" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-    <option value="">Sort by price</option>
-    <option value="asc" {% if request.GET.sort_price == "asc" %}selected{% endif %}>Low → High</option>
-    <option value="desc" {% if request.GET.sort_price == "desc" %}selected{% endif %}>High → Low</option>
-  </select>
-
-  <button type="submit" style="padding: 5px 10px; border-radius: 5px; border: none; background: #333; color: #fff;">
-    Apply
-  </button>
+<form method="get" class="filter-form">
+    <input type="text" name="title" placeholder="Search by title..." value="{{ request.GET.title }}">
+    <select name="category">
+        <option value="">All categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+            {{ cat.name }}
+        </option>
+        {% endfor %}
+    </select>
+    <select name="sort_price">
+        <option value="">Sort by price</option>
+        <option value="asc" {% if request.GET.sort_price == "asc" %}selected{% endif %}>Low → High</option>
+        <option value="desc" {% if request.GET.sort_price == "desc" %}selected{% endif %}>High → Low</option>
+    </select>
+    <button type="submit">Apply</button>
 </form>
 
-
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-  {% for product in products %}
-    <div style="border: 1px solid #ccc; border-radius: 10px; padding: 10px; text-align: center; background: #f9f9f9;">
-      <h3>
-        <a href="{% url 'products:product_detail' product.pk %}" style="text-decoration: none; color: #333;">
-          {{ product.name }}
-        </a>
-      </h3>
-      <p style="font-weight: bold;">${{ product.price }}</p>
+<div class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <h3><a href="{% url 'products:product_detail' product.pk %}">{{ product.name }}</a></h3>
+        <p>${{ product.price }}</p>
     </div>
-  {% empty %}
-    <p>No products found.</p>
-  {% endfor %}
+    {% empty %}
+    <p style="color:#aaa; grid-column: 1/-1; text-align: center;">No products found.</p>
+    {% endfor %}
 </div>
 {% endblock %}

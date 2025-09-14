@@ -3,40 +3,84 @@
 {% block title %}My Orders{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h1 class="mb-4 text-center">📦 My Orders</h1>
+<style>
+.orders-container {
+    max-width: 900px;
+    margin: 50px auto;
+    color: #e0e0e0;
+}
+.order-card {
+    background-color: #1f1f2f;
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease;
+}
+.order-card:hover {
+    transform: translateY(-3px);
+}
+.order-info {
+    font-size: 1rem;
+    font-weight: 500;
+}
+.order-badge {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+.badge-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+.badge-processing {
+    background-color: #17a2b8;
+    color: #fff;
+}
+.badge-completed {
+    background-color: #28a745;
+    color: #fff;
+}
+.badge-canceled {
+    background-color: #dc3545;
+    color: #fff;
+}
+</style>
 
-  {% if orders %}
-    <ul class="list-group">
-      {% for order in orders %}
-        <li class="list-group-item d-flex justify-content-between align-items-center flex-column flex-md-row mb-2 shadow-sm rounded">
-          <div>
-            <strong>Order #{{ order.id }}</strong> — Placed on {{ order.created_at|date:"d M Y H:i" }} — Total: ${{ order.total_price }}
-          </div>
+<div class="orders-container">
+    <h1 class="mb-4 text-center">📦 My Orders</h1>
 
-          <div class="mt-2 mt-md-0">
-            {% if order.status == "pending" %}
-              <span class="badge bg-warning text-dark">Pending</span>
-            {% elif order.status == "processing" %}
-              <span class="badge bg-info text-dark">Processing</span>
-            {% elif order.status == "completed" %}
-              <span class="badge bg-success">Completed</span>
-            {% elif order.status == "canceled" %}
-              <span class="badge bg-danger">Canceled</span>
-            {% endif %}
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <div class="alert alert-info text-center mt-4">
-      You haven't placed any orders yet. 🛍️
-      <a href="{% url 'products:index' %}" class="alert-link">Shop now</a>
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-card d-flex justify-content-between align-items-center flex-column flex-md-row">
+            <div class="order-info">
+                <strong>Order #{{ order.id }}</strong> — Placed on {{ order.created_at|date:"d M Y H:i" }}  
+                <br>
+                Total: <span class="text-success fw-bold">${{ order.total_price }}</span>
+            </div>
+            <div class="mt-3 mt-md-0">
+                {% if order.status == "pending" %}
+                  <span class="order-badge badge-pending">⏳ Pending</span>
+                {% elif order.status == "processing" %}
+                  <span class="order-badge badge-processing">🔄 Processing</span>
+                {% elif order.status == "completed" %}
+                  <span class="order-badge badge-completed">✅ Completed</span>
+                {% elif order.status == "canceled" %}
+                  <span class="order-badge badge-canceled">❌ Canceled</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center mt-4 shadow">
+            You haven't placed any orders yet. 🛍️  
+            <a href="{% url 'products:index' %}" class="alert-link">Shop now</a>
+        </div>
+    {% endif %}
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'products:index' %}" class="btn btn-outline-secondary">⬅ Back to Shop</a>
     </div>
-  {% endif %}
-
-  <div class="mt-4 text-center">
-    <a href="{% url 'products:index' %}" class="btn btn-outline-dark">⬅ Back to Shop</a>
-  </div>
 </div>
 {% endblock %}

@@ -1,12 +1,71 @@
 {% extends "__base.html" %}
 
-{% block title %}Home - Shop{% endblock %}
+{% block title %}Create Product{% endblock %}
 
 {% block content %}
+<style>
+.create-product-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: #1f1f2f;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+    color: #e0e0e0;
+}
+.create-product-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #fff;
+}
+.create-product-container form p {
+    margin-bottom: 20px;
+}
+.create-product-container input,
+.create-product-container select,
+.create-product-container textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #444466;
+    background-color: #12121e;
+    color: #e0e0e0;
+    font-size: 14px;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+.create-product-container input:focus,
+.create-product-container select:focus,
+.create-product-container textarea:focus {
+    border-color: #6c63ff;
+    outline: none;
+    box-shadow: 0 0 10px #6c63ff50;
+}
+.create-product-container button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #6c63ff;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.create-product-container button:hover {
+    background-color: #5750d1;
+    transform: translateY(-2px);
+}
+</style>
+
+<div class="create-product-container">
     <h1>Create Product</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Save</button>
     </form>
+</div>
 {% endblock %}

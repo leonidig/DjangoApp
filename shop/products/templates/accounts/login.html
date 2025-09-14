@@ -1,13 +1,83 @@
 {% extends "__base.html" %}
 {% block title %}Login{% endblock %}
-	
-{% block content %}
 
-	<h2>Login</h2>
-	<form method="post">
-	    {% csrf_token %}
-	    {{ form.as_p }}
-	    <button type="submit">Login</button>
-	</form>
-	
+{% block content %}
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: 80px auto;
+        padding: 40px;
+        background-color: #1f1f2f;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+        text-align: center;
+        color: #e0e0e0;
+        transition: transform 0.3s ease;
+    }
+    .login-container:hover {
+        transform: translateY(-5px);
+    }
+    h2 {
+        margin-bottom: 30px;
+        font-weight: 700;
+        color: #ffffff;
+    }
+    form p {
+        margin-bottom: 20px;
+    }
+    input {
+        width: 100%;
+        padding: 12px 15px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid #444466;
+        background-color: #12121e;
+        color: #e0e0e0;
+        font-size: 14px;
+        transition: border 0.3s, box-shadow 0.3s;
+    }
+    input:focus {
+        border-color: #6c63ff;
+        outline: none;
+        box-shadow: 0 0 10px #6c63ff50;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        background-color: #6c63ff;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+        background-color: #5750d1;
+        transform: translateY(-2px);
+    }
+    .register-link {
+        margin-top: 20px;
+        display: block;
+        font-size: 14px;
+        color: #aaa;
+        transition: color 0.3s;
+    }
+    .register-link:hover {
+        color: #6c63ff;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="login-container">
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
+    <a class="register-link" href="{% url 'products:register' %}">Don't have an account? Register here</a>
+</div>
 {% endblock %}
